@@ -62,7 +62,9 @@ export default class Index extends React.Component {
     // 租房小组数据
     groups: [],
     // 最新资讯
-    news: []
+    news: [],
+    // 当前城市名称
+    curCityName:''
   };
   //   获取轮播图数据的方法
   async getSwipers() {
@@ -101,6 +103,16 @@ export default class Index extends React.Component {
     this.getSwipers();
     this.getGroups();
     this.getNews();
+
+    // 通过IP定位获取当前城市名称  百度地图
+    const curCity = new window.BMap.LocalCity();
+     curCity.get( async res => {
+         console.log(res);
+        const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`)
+        this.setState({
+          curCityName: result.data.body.label
+        })
+     }); 
   }
 
   //   渲染轮播图结构  把逻辑单独抽离到这个方法里面
@@ -186,7 +198,7 @@ export default class Index extends React.Component {
                {/* 位置 */}
                {/* this.props.history.push('/citylist') 给地址区域绑定点击事件，实现路由跳转到城市选择页面  同时给搜索框和地图图标也要绑定路由跳转页面*/}
                <div className="location" onClick={() => this.props.history.push('/citylist')}>
-                 <span className="name">上海</span>
+                 <span className="name">{this.state.curCityName}</span>
                  <i className="iconfont icon-arrow" />
                </div>
                {/* 搜索表单 */}
