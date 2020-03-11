@@ -37,12 +37,32 @@ const tabItems = [
       }
 ]
 
+// 问题：点击首页导航菜单内容，导航到其他的页面时，tabBar没有对应板块没有显示高亮
+// 原因：原来在实现该功能的时候，只考虑来  点击以及第一次加载 Home组件的情况，但是我们没有考虑不重新加载Home页面的时候，路由进行跳转的时候是否高亮，我们的代码没有覆盖到
+// 解决：在路由切换时，也执行菜单高亮的逻辑代码
+//  首先添加componentDidUpdate钩子函数
+//  在钩子函数中判断路由地址是否切换 通过比较前后两个props，因为路由的信息是通过props传递给组件的
+//  在路由地址切换时，让菜单高亮
+
+
 export default class Home extends React.Component {
 //   在tabbar中做一些状态的设置
   state = {
     // 哪个显示高亮效果 默认选中的TabBar菜单项  路由地址是多少，对应的菜单显示高亮
     selectedTab: this.props.location.pathname
   }
+// 解决高亮问题
+componentDidUpdate(prevProps){
+   console.log('上一次路由信息',prevProps);
+   console.log('这次路由信息',this.props);
+   if(prevProps.location.pathname !== this.props.location.pathname){
+      // 当上一次不等于这一次时，此时，说明路由发生切换了
+      // 进行状态的更新,让当前最新的菜单进行高亮即可
+      this.setState({
+        selectedTab:this.props.location.pathname
+      })
+    }
+}
 //   放置tabBar的数据内容，进行遍历数据，渲染tabBar.item  
 renderTabBarItem(){
     return tabItems.map(item => <TabBar.Item

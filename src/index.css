@@ -10,6 +10,7 @@ html,body {
   /* 去掉轮播图在Chrome的错误提示 */
   touch-action: pan-y;
 }
-h2{
+h2,
+p{
   margin: 0;
 }
