@@ -14,6 +14,9 @@ import Nav4 from "../../assets/images/nav-4.png";
 // 导入样式文件
 import "./index.scss";
 
+// 导入utils中获取当前定位城市的方法
+import { getCurrentCity} from '../../utils'
+
 // 导航菜单的数据
 const navs = [
   {
@@ -47,10 +50,9 @@ const navs = [
 // 获取地理位置信息，主要是用于获取用户手机定位
 // 地理位置API通过navigator.geolocation对象提供，通过getCurrentPosition方法获取
 // navigator.geolocation.getCurrentPosition(position => {
-      //  其中经纬度 属性 被使用较多
+//  其中经纬度 属性 被使用较多
 // })
 //  在实际中，主要还是通过百度地图等地图软件来获取用户位置
-
 
 export default class Index extends React.Component {
   state = {
@@ -64,7 +66,7 @@ export default class Index extends React.Component {
     // 最新资讯
     news: [],
     // 当前城市名称
-    curCityName:''
+    curCityName: ""
   };
   //   获取轮播图数据的方法
   async getSwipers() {
@@ -99,20 +101,28 @@ export default class Index extends React.Component {
   }
 
   //   修改状态,生命周期函数  实现一进页面就调用轮播图页面的功能
-  componentDidMount() {
+  async componentDidMount() {
     this.getSwipers();
     this.getGroups();
     this.getNews();
 
     // 通过IP定位获取当前城市名称  百度地图
-    const curCity = new window.BMap.LocalCity();
-     curCity.get( async res => {
-         console.log(res);
-        const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`)
-        this.setState({
-          curCityName: result.data.body.label
-        })
-     }); 
+    // const curCity = new window.BMap.LocalCity()
+    // curCity.get(async res => {
+    //   console.log(res);
+    //   const result = await axios.get(
+    //     `http://localhost:8080/area/info?name=${res.name}`
+    //   );
+    //   this.setState({
+    //     curCityName: result.data.body.label
+    //   });
+    // });
+    // 获取当前城市名称,已经在utils里面封装了获取当前定位城市的函数，直接在这里调用即可
+    const curCity = await getCurrentCity()
+      this.setState({
+        curCityName: curCity.label
+      });
+    
   }
 
   //   渲染轮播图结构  把逻辑单独抽离到这个方法里面
@@ -152,20 +162,24 @@ export default class Index extends React.Component {
   //   最新资讯的代码结构
   // 遍历news数据,结构是由左侧的图片区域和右侧的文字区域组成，右侧是flex布局,右侧又分为两块，上面是标题，下面依旧是flex布局
   renderNews() {
-       return this.state.news.map(item => (
-           <div className="news-item" key={item.id}>
-              <div className="imgwrap">
-                <img  className="img" src={`http://localhost:8080${item.imgSrc}`} alt=""  />
-              </div>
-              <Flex className="content" direction="column" justify="between">
-                 <h3 className="title">{item.title}</h3>
-                 <Flex className="info" justify="between">
-                    <span>{item.from} </span>
-                    <span>{item.date} </span>
-                 </Flex>
-              </Flex>
-           </div>
-       ))
+    return this.state.news.map(item => (
+      <div className="news-item" key={item.id}>
+        <div className="imgwrap">
+          <img
+            className="img"
+            src={`http://localhost:8080${item.imgSrc}`}
+            alt=""
+          />
+        </div>
+        <Flex className="content" direction="column" justify="between">
+          <h3 className="title">{item.title}</h3>
+          <Flex className="info" justify="between">
+            <span>{item.from} </span>
+            <span>{item.date} </span>
+          </Flex>
+        </Flex>
+      </div>
+    ));
   }
 
   render() {
@@ -194,21 +208,30 @@ export default class Index extends React.Component {
           {/* 顶部搜索框 */}
           <Flex className="search-box">
             {/* 左侧白色区域 */}
-             <Flex className="search">
-               {/* 位置 */}
-               {/* this.props.history.push('/citylist') 给地址区域绑定点击事件，实现路由跳转到城市选择页面  同时给搜索框和地图图标也要绑定路由跳转页面*/}
-               <div className="location" onClick={() => this.props.history.push('/citylist')}>
-                 <span className="name">{this.state.curCityName}</span>
-                 <i className="iconfont icon-arrow" />
-               </div>
-               {/* 搜索表单 */}
-               <div className="form" onClick={() => this.props.history.push('/search')}>
-                 <i className="iconfont icon-seach"/>
-                 <span className="text">请输入小区或地址</span>
-               </div>
-             </Flex>
-             {/* 右侧地图图标 */}
-             <i className="iconfont icon-map" onClick={() => this.props.history.push('/map')}/>
+            <Flex className="search">
+              {/* 位置 */}
+              {/* this.props.history.push('/citylist') 给地址区域绑定点击事件，实现路由跳转到城市选择页面  同时给搜索框和地图图标也要绑定路由跳转页面*/}
+              <div
+                className="location"
+                onClick={() => this.props.history.push("/citylist")}
+              >
+                <span className="name">{this.state.curCityName}</span>
+                <i className="iconfont icon-arrow" />
+              </div>
+              {/* 搜索表单 */}
+              <div
+                className="form"
+                onClick={() => this.props.history.push("/search")}
+              >
+                <i className="iconfont icon-seach" />
+                <span className="text">请输入小区或地址</span>
+              </div>
+            </Flex>
+            {/* 右侧地图图标 */}
+            <i
+              className="iconfont icon-map"
+              onClick={() => this.props.history.push("/map")}
+            />
           </Flex>
         </div>
 
