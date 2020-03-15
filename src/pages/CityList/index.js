@@ -4,7 +4,7 @@ import React from "react";
 import axios from "axios";
 
 // 导入antd-mobile组件
-import { NavBar } from "antd-mobile";
+import { NavBar , Toast} from "antd-mobile";
 
 // 导入react-virtualized中list组件
 import { List, AutoSizer } from "react-virtualized";
@@ -69,17 +69,31 @@ const formatCityIndex = letter => {
   }
 };
 
+// 有房源的城市
+const HOUSE_CITY = ['北京', '上海' , '广州' , '深圳']
+
 export default class CityList extends React.Component {
-  state = {
-    // 将cityList，cityIndex添加为组件的状态数据
-    cityList: {},
-    cityIndex: [],
-    // 指定右侧字母列表需要高亮的索引号
-    activeIndex: 0
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      // 将cityList，cityIndex添加为组件的状态数据
+      cityList: {},
+      cityIndex: [],
+      // 指定右侧字母列表需要高亮的索引号
+      activeIndex: 0
+    }
+    // 创建ref对象
+    this.cityListComponent = React.createRef()
+  }
+
   //   希望一进入页面时 就拿到数据
-  componentDidMount() {
-    this.getCityList();
+ async componentDidMount() {
+    await this.getCityList();
+
+    // 调用measureAllRows，提前计算list中每一行的高度，实现scrollToRow的精确跳转,因为使用scrollToRow必须保证每一行是被渲染过了是可见的
+    // 调用这个方法的时候，需要保证list组件中已经有数据了，如果list组件中的数据为空，就会导致调用方法报错，所以，只要保证这个方法是在获取到数据之后调用的即可，所以把这个钩子函数进行异步操作，等异步操作完成了，再来执行即可
+    this.cityListComponent.current.measureAllRows()
   }
 
   //   获取城市列表数据
@@ -110,6 +124,20 @@ export default class CityList extends React.Component {
     });
   }
 
+  // 点击城市之后触发的事件行为
+  changeCity({label, value}){
+      // 判断当前点击的城市是不是，我们指定的有房源的城市HOUSE_CITY里面的
+      if(HOUSE_CITY.indexOf(label) > -1){
+        // 是有房源的城市 则保存到本地存储,并且返回上一页，渲染出该城市的名字
+        localStorage.setItem('hkzf_city',JSON.stringify({label,value}))
+        this.props.history.go(-1)
+      }else{
+        //  没有房源的城市就提示
+         Toast.info('该城市暂无房源数据', 1, null,false)
+      }
+      
+  }
+
   // 渲染每一行数据的渲染函数
   rowRenderer = ({
     key, // Unique key within array of rows
@@ -129,7 +157,8 @@ export default class CityList extends React.Component {
       <div key={key} style={style} className="city">
         <div className="title">{formatCityIndex(letter)}</div>
         {cityList[letter].map(item => (
-          <div className="name" key={item.value}>
+          // 给城市名称绑定点击事件，点击之后去到该城市
+          <div className="name" key={item.value} onClick={() => this.changeCity(item)}>
             {item.label}
           </div>
         ))}
@@ -148,7 +177,17 @@ export default class CityList extends React.Component {
   renderCityIndex() {
     //  获取到cityindex，并遍历，实现渲染
     return this.state.cityIndex.map((item, index) => (
-      <li className="city-index-item" key={item}>
+      // 给每一栏绑定点击事件
+      <li
+        className="city-index-item"
+        key={item}
+        onClick={() => {
+          // console.log(index);
+          // 通过ref的current属性。获取 到组件实例，再调用组件的scrollToRow方法
+          // 再去list中设置scrollToAlignment属性的值对start，实现点击跳转到对应字母的城市，并且在最顶部
+          this.cityListComponent.current.scrollToRow(index)
+        }}
+      >
         <span
           className={this.state.activeIndex === index ? "index-active" : ""}
         >
@@ -157,6 +196,15 @@ export default class CityList extends React.Component {
       </li>
     ));
   }
+
+  // 实现最顶部索引号显示高亮 onRowsRendered用于获取list组件中渲染行的信息,通过这个方法进行一个判断，起始行索引最顶部的startIndex不等于当前高亮的索引号activeIndex时，就渲染更新当前高亮等于最顶部索引
+  onRowsRendered = ({ startIndex }) => {
+    if (this.state.activeIndex !== startIndex) {
+      this.setState({
+        activeIndex: startIndex
+      });
+    }
+  };
 
   render() {
     return (
@@ -176,11 +224,14 @@ export default class CityList extends React.Component {
         <AutoSizer>
           {({ width, height }) => (
             <List
+              ref={this.cityListComponent}
               width={width}
               height={height}
               rowCount={this.state.cityIndex.length}
               rowHeight={this.getRowHeight}
               rowRenderer={this.rowRenderer}
+              onRowsRendered={this.onRowsRendered}
+              scrollToAlignment="start"
             />
           )}
         </AutoSizer>
