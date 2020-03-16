@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+
 
 // 导入antd-mobile样式
 import 'antd-mobile/dist/antd-mobile.css'
@@ -11,6 +11,8 @@ import './assets/fonts/iconfont.css'
 // 注意：我们自己写到全局到样式需要放在组件库的样式的后面导入，这样样式才会生效
 import './index.css';
 
+// 应该将组件导入放在样式导入后面，避免样式覆盖的问题
+import App from './App';
 
 
 ReactDOM.render(<App />, document.getElementById('root'));

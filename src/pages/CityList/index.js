@@ -4,16 +4,21 @@ import React from "react";
 import axios from "axios";
 
 // 导入antd-mobile组件
-import { NavBar , Toast} from "antd-mobile";
+import { Toast} from "antd-mobile";
 
 // 导入react-virtualized中list组件
 import { List, AutoSizer } from "react-virtualized";
 
+// 导入utils中获取当前定位城市的方法
+import { getCurrentCity } from "../../utils";
+
+// 导入封装好的NavHeader组件 
+import NavHeader from '../../components/NavHeader'
+
 // 导入样式
 import "./index.scss";
 
-// 导入utils中获取当前定位城市的方法
-import { getCurrentCity } from "../../utils";
+
 
 // 数据格式化的方式,将数据格式化成以拼音开头字母分类的方式。把原数据数组键值对格式("属性":"属性值")处理成一个可以分类的同一个字母开头的城市都放在一起为对象的数据格式(a开头:[{}, {}])，因为对象是无法分类的，我们获取到的分类的城市信息是没办法自行排序的，所以要把它最终变成一个数组的形式，进行展示，也就是最终的cityIndex的格式
 // 把数据res.data.body作为参数传递给我们的方法formatCityData
@@ -210,14 +215,7 @@ export default class CityList extends React.Component {
     return (
       <div className="citylist">
         {/* 顶部导航栏 */}
-        <NavBar
-          className="navbar"
-          mode="light"
-          icon={<i className="iconfont icon-back" />}
-          onLeftClick={() => this.props.history.go(-1)}
-        >
-          城市选择
-        </NavBar>
+        <NavHeader>城市选择</NavHeader>
 
         {/* 城市列表 */}
         {/* AutoSizer让屏幕占满内容 */}
