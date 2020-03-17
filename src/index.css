@@ -13,7 +13,8 @@ html,body {
 }
 h2,
 p,
-ul{
+ul,
+h1{
   margin: 0;
 }
 
