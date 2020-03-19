@@ -3,10 +3,15 @@ import React from "react";
 // 导入toast
 import { Toast } from "antd-mobile";
 // 导入axios
-import axios from "axios";
+// import axios from "axios";
+// 导入创建的axios实例，并且代替公共路径http://localhost:8080
+import {API} from '../../utils/api'
 
 // 导入封装好的NavHeader组件
 import NavHeader from "../../components/NavHeader";
+
+// 导入BASE_URL,代替本地地址http://localhost:8080
+import {BASE_URL} from '../../utils/url'
 
 // 导入样式 。
 // import './index.scss' 不需要你了
@@ -165,7 +170,8 @@ export default class Map extends React.Component {
       // 开启loading，获取数据之前开启
       Toast.loading("加载中···", 0, null, false);
       // 获取房源数据
-      const res = await axios.get(`http://localhost:8080/area/map?id=${id}`);
+      // 去掉前缀http://localhost:8080，只留当前接口地址，
+      const res = await API.get(`/area/map?id=${id}`);
       // 关闭toast，获取完了关闭
       Toast.hide();
       console.log("enter", res);
@@ -318,7 +324,7 @@ export default class Map extends React.Component {
     try {
       // 开启loading，获取数据之前开启
       Toast.loading("加载中···", 0, null, false);
-      const res = await axios.get(`http://localhost:8080/houses?cityId=${id}`);
+      const res = await API.get(`/houses?cityId=${id}`);
       // console.log(res);
       // 关闭toast，获取完了关闭
       Toast.hide();
@@ -342,7 +348,7 @@ export default class Map extends React.Component {
         <div className={styles.imgWrap}>
           <img
             className={styles.img}
-            src={`http://localhost:8080${item.houseImg}`}
+            src={BASE_URL + item.houseImg}
             alt=""
           />
         </div>

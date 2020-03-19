@@ -14,7 +14,8 @@ html,body {
 h2,
 p,
 ul,
-h1{
+h1,
+dd{
   margin: 0;
 }
 
