@@ -40,6 +40,8 @@ export default class Filter extends Component {
   };
 
   componentDidMount() {
+    // 获取到body
+    this.htmlBody = document.body
     this.getFilterData();
   }
 
@@ -57,6 +59,8 @@ export default class Filter extends Component {
   // 被点击的标题菜单实现高亮，使用箭头函数保证this指向问题,应该指向 父组件
   // 父组件通过type接收到子组件传递过来的类型item.type
   onTitleClick = type => {
+    // 给body添加样式, 这样每次点开的时候就有样式设置的效果，就不会滚动了
+    this.htmlBody.className = 'body-fixed'
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -119,6 +123,7 @@ export default class Filter extends Component {
   //  隐藏对话框
   // 因为oncancel这个方法中，没有type这个参数，所以就要在调用oncancel这个方法时，来传递type参数
   onCancel = type => {
+    this.htmlBody.className = ''
     // 菜单高亮的逻辑处理
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
@@ -155,6 +160,8 @@ export default class Filter extends Component {
   // 点击onsave按钮  隐藏对话框
   // 接收子组件FilterMore点击确定按钮之后传递过来的选中值，并更新状态selectedValues
   onSave = (type, value) => {
+    // 点击确定或者取消  让该样式消失，页面恢复滚动
+    this.htmlBody.className = ''
     // 菜单高亮的逻辑处理
     const { titleSelectedStatus } = this.state;
     // 创建新的标题选中状态对象
@@ -236,7 +243,7 @@ export default class Filter extends Component {
       titleSelectedStatus: newTitleSelectedStatus,
       selectedValues: newSelectedValues
       // 当前type是谁 就把当前谁的值进行更新
-      // selectedValues: {
+      // selectedValues: { 
       //   // 拿到原来对象的所有值
       //   ...this.state.selectedValues,
       //   // 只更新当前type对应的选中值
