@@ -143,6 +143,7 @@ export default class HouseList extends React.Component {
       // HouseItem里面有什么就要传入什么数据
       <HouseItem
         key={key}
+        onClick={() => this.props.history.push(`/detail/${house.houseCode}`)}
         style={style}
         src={BASE_URL + house.houseImg}
         title={house.title}

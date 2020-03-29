@@ -17,16 +17,18 @@ import styles from './index.module.css'
 
 // 把顶部导航栏封装成一个动态的函数，哪里需要就直接调用即可
 // 将onLeftClick解构出来，如果用户有自己想要实现的行为，自己自定义按钮的点击事件即可，如果没有就默认我们设置的点击行为
-function NavHeader({children,history,onLeftClick}) {
+function NavHeader({children,history,onLeftClick,className,rightContent}) {
 // 默认点击行为
   const  defaultHandler = () => history.go(-1)
   return (
     <NavBar
-      className={styles.navBar}
+      className={[styles.navBar, className || ''].join('')}
       mode="light"
       icon={<i className="iconfont icon-back" />}
     //   在这进行一个判断用户使用自己自定义的onLeftClick，如果没有传入，就是使用默认点击行为defaultHandler
       onLeftClick={onLeftClick || defaultHandler}
+      // 指定导航栏右侧展示的内容，组件的配置项，是一个数组
+      rightContent= {rightContent}
     >
       {children}
     </NavBar>
@@ -38,7 +40,9 @@ NavHeader.propTypes = {
     // children属性为必填项
     children:PropTypes.string.isRequired,
     // onLeftClick是一个函数
-    onLeftClick: PropTypes.func
+    onLeftClick: PropTypes.func,
+    className: PropTypes.string,
+    rightContent: PropTypes.array
 }
 
 

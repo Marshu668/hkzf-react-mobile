@@ -5,15 +5,15 @@ import { Toast } from "antd-mobile";
 // 导入axios
 // import axios from "axios";
 // 导入创建的axios实例，并且代替公共路径http://localhost:8080
-import {API} from '../../utils/api'
+import { API } from "../../utils/api";
 
 // 导入封装好的NavHeader组件
 import NavHeader from "../../components/NavHeader";
 // 导入 HouseItem 组件
-import HouseItem from '../../components/HouseItem'
+import HouseItem from "../../components/HouseItem";
 
 // 导入BASE_URL,代替本地地址http://localhost:8080
-import {BASE_URL} from '../../utils/url'
+import { BASE_URL } from "../../utils/url";
 
 // 导入样式 。
 // import './index.scss' 不需要你了
@@ -343,7 +343,7 @@ export default class Map extends React.Component {
   // 封装渲染房屋列表的结构的方法
   renderHousesList() {
     // 直接调用封装的HouseItem的组件
-    return this.state.housesList.map(item => (
+    return this.state.houseList.map(item => (
       <HouseItem
         key={item.houseCode}
         src={BASE_URL + item.houseImg}

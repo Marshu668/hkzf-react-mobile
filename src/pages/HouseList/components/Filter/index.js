@@ -4,6 +4,9 @@ import FilterTitle from "../FilterTitle";
 import FilterPicker from "../FilterPicker";
 import FilterMore from "../FilterMore";
 
+// 导入动画库   Spring组件
+import { Spring } from "react-spring/renderprops";
+
 // 导入自定义的API  axios请求
 import { API } from "../../../../utils/api";
 
@@ -41,7 +44,7 @@ export default class Filter extends Component {
 
   componentDidMount() {
     // 获取到body
-    this.htmlBody = document.body
+    this.htmlBody = document.body;
     this.getFilterData();
   }
 
@@ -60,7 +63,7 @@ export default class Filter extends Component {
   // 父组件通过type接收到子组件传递过来的类型item.type
   onTitleClick = type => {
     // 给body添加样式, 这样每次点开的时候就有样式设置的效果，就不会滚动了
-    this.htmlBody.className = 'body-fixed'
+    this.htmlBody.className = "body-fixed";
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -123,7 +126,7 @@ export default class Filter extends Component {
   //  隐藏对话框
   // 因为oncancel这个方法中，没有type这个参数，所以就要在调用oncancel这个方法时，来传递type参数
   onCancel = type => {
-    this.htmlBody.className = ''
+    this.htmlBody.className = "";
     // 菜单高亮的逻辑处理
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
@@ -161,7 +164,7 @@ export default class Filter extends Component {
   // 接收子组件FilterMore点击确定按钮之后传递过来的选中值，并更新状态selectedValues
   onSave = (type, value) => {
     // 点击确定或者取消  让该样式消失，页面恢复滚动
-    this.htmlBody.className = ''
+    this.htmlBody.className = "";
     // 菜单高亮的逻辑处理
     const { titleSelectedStatus } = this.state;
     // 创建新的标题选中状态对象
@@ -234,8 +237,8 @@ export default class Filter extends Component {
     filters.more = more.join(",");
 
     console.log(filters);
-   // 调用父组件中的方法，来将筛选数据传递给父组件
-   this.props.onFilter(filters)
+    // 调用父组件中的方法，来将筛选数据传递给父组件
+    this.props.onFilter(filters);
 
     this.setState({
       openType: "",
@@ -243,7 +246,7 @@ export default class Filter extends Component {
       titleSelectedStatus: newTitleSelectedStatus,
       selectedValues: newSelectedValues
       // 当前type是谁 就把当前谁的值进行更新
-      // selectedValues: { 
+      // selectedValues: {
       //   // 拿到原来对象的所有值
       //   ...this.state.selectedValues,
       //   // 只更新当前type对应的选中值
@@ -331,20 +334,40 @@ export default class Filter extends Component {
       />
     );
   }
+  // 渲染代表遮罩层的div
+  renderMask() {
+    const { openType } = this.state;
+    const isHide = openType === "more" || openType === ""
+    // if (openType === "more" || openType === "" ) {
+    //   return  null
+    // }
+    return (
+      <Spring from={{ opacity: 0 }} to={{ opacity: isHide ? 0 : 1 }}>
+          {/* props  是{opacity:0} 0到1的中间值 */}
+          {props => {
+            // 判断  遮罩层已经完成动画效果了， 可以隐藏了
+              if(props.opacity === 0){
+                return null
+              }
+            return (
+             <div
+              style={props}
+              className={styles.mask}
+              onClick={() => this.onCancel(openType)}
+            />
+            )
+          }}
+        </Spring>
+    );
+  }
   render() {
     // 从state中将titleSelectedStatus解构出来，再传递给当前的组件
-    const { titleSelectedStatus, openType } = this.state;
+    const { titleSelectedStatus } = this.state;
 
     return (
       <div className={styles.root}>
         {/* 前三个菜单的遮罩层 */}
-        {/* 遮罩层的显示与隐藏也要进行判断 */}
-        {openType === "area" || openType === "mode" || openType === "price" ? (
-          <div
-            className={styles.mask}
-            onClick={() => this.onCancel(openType)}
-          />
-        ) : null}
+        {this.renderMask()}
 
         <div className={styles.content}>
           {/* 标题栏 */}
