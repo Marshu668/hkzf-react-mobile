@@ -34,3 +34,6 @@ export const getCurrentCity = () => {
 //  因为上面为了处理异步操作，使用了promise，因为，为了该函数返回值的统一，此处，也应该使用promise，但是此处的promise不会失败，所以，只需要返回一个成功的promise即可
  return Promise.resolve(localCity)
 };
+
+export {API} from './api'
+export {BASE_URL} from './url'

@@ -7,7 +7,7 @@ import Home  from './pages/Home'
 import CityList from './pages/CityList'
 import Map from './pages/Map'
 import HouseDetail from "./pages/HouseDetail";
-
+import Login from "./pages/Login"
 function App() {
   return (
     <Router>
@@ -25,6 +25,8 @@ function App() {
         <Route path="/map" component={Map}></Route>
         {/* 房源详情的路由规则 */}
         <Route path="/detail/:id" component={HouseDetail}/>
+        {/* 登录页面 */}
+        <Route  path="/login" component={Login}   />
       </div>
     </Router>
   );

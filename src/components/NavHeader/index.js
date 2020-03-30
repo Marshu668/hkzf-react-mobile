@@ -22,7 +22,7 @@ function NavHeader({children,history,onLeftClick,className,rightContent}) {
   const  defaultHandler = () => history.go(-1)
   return (
     <NavBar
-      className={[styles.navBar, className || ''].join('')}
+      className={[styles.navBar, className || ''].join(' ')}
       mode="light"
       icon={<i className="iconfont icon-back" />}
     //   在这进行一个判断用户使用自己自定义的onLeftClick，如果没有传入，就是使用默认点击行为defaultHandler

@@ -129,7 +129,7 @@ export default class HouseList extends React.Component {
     const { list } = this.state;
     const house = list[index];
 
-    console.log(house);
+    // console.log(house);
     // 判断 house 是否存在,就是判断往下划能不能加载出数据
     // 如果不存在，就渲染 loading 元素占位，就是类名为loading的样式
     if (!house) {
