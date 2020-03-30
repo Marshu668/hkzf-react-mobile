@@ -8,6 +8,10 @@ import CityList from './pages/CityList'
 import Map from './pages/Map'
 import HouseDetail from "./pages/HouseDetail";
 import Login from "./pages/Login"
+
+// 导入登录访问控制，什么页面必须登录之后才可以查看 就可以使用这个
+import AuthRoute from './components/AuthRoute'
+
 function App() {
   return (
     <Router>
@@ -22,7 +26,7 @@ function App() {
         <Route path="/" exact render={() => <Redirect to="/home" />} ></Route>
         <Route path="/home" component={Home}></Route>
         <Route path="/citylist" component={CityList}></Route>
-        <Route path="/map" component={Map}></Route>
+        <AuthRoute path="/map" component={Map} />
         {/* 房源详情的路由规则 */}
         <Route path="/detail/:id" component={HouseDetail}/>
         {/* 登录页面 */}

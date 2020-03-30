@@ -161,8 +161,22 @@ Login = withFormik({
     if(status === 200 ){
         // 登录成功  把token保存到本地存储中hkzf_token，返回上一个页面
        localStorage.setItem('hkzf_token', body.token)
+       /* 
+        1 登录成功后，判断是否需要跳转到用户想要访问的页面（判断 props.location.state 是否有值）。
+        2 如果不需要（没有值），则直接调用 history.go(-1) 返回上一页。
+        3 如果需要，就跳转到 from.pathname 指定的页面（推荐使用 replace 方法模式，而不是 push）。
+      */
+    // 判断 props.location.state 是否有值， 如果有值  说明是 从其他页面中重定向到登录页面的，如果没有值说明直接进入到了登录页面，就直接登录跳回上个页面，用户要进入到的页面
+      if (!props.location.state) {
+        // 此时，表示是直接进入到了该页面，直接调用 go(-1) 即可
+        props.history.go(-1)
+      } else {
+        // push：[home, login, map]
+        // replace: [home, map]，直接用map替换了login，点返回就是回到home页面
+        props.history.replace(props.location.state.from.pathname)
+      }
         // 无法在该方法中，通过this来获取到路由信息，所以需要通过handleSubmit:async (values,{props})，第二个对象参数中获取到props来使用props
-       props.history.go(-1)
+      //  props.history.go(-1)
     }else{
         // 登录失败    提示错误信息
         Toast.info(description,2 ,null,false)
